@@ -13,7 +13,6 @@ import CategoryBarChart from '../components/CategoryBarChart';
 import MonthlyTrend from '../components/MonthlyTrend';
 import BackersVsPledgedChart from '../components/BackersVsPledgedChart';
 import DashboardLayout from '../components/DashboardLayout';
-import '../styles/theme.css';
 
 // 스켈레톤 애니메이션 CSS
 const skeletonStyles = `

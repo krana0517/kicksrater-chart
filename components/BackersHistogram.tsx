@@ -19,8 +19,7 @@ export default function BackersHistogram({ data, loading }: Props) {
           x: backers,
           type: 'histogram',
           marker: { color: '#fbbf24' },
-          nbinsx: 30,
-        }]}
+        }] as any}
         layout={{
           margin: { t: 30, l: 40, r: 10, b: 40 },
           xaxis: { title: '후원자 수' },
@@ -28,7 +27,8 @@ export default function BackersHistogram({ data, loading }: Props) {
           paper_bgcolor: 'rgba(0,0,0,0)',
           plot_bgcolor: 'rgba(0,0,0,0)',
           font: { family: 'inherit' },
-        }}
+          bargap: 0.1,
+        } as any}
         style={{ width: '100%', height: '260px' }}
         config={{ displayModeBar: false }}
       />

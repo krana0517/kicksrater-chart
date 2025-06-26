@@ -14,10 +14,13 @@ const menuItems = [
 export default function KickstarterDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
 
+  // 임시 데이터
+  const data: any[] = [];
+
   // 통합 필터/검색 적용 (딱 한 번만 선언)
   const filteredData = data.filter(d => {
     // ...필터 조건...
-    return ...;
+    return true;
   });
 
   return (

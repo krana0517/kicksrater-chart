@@ -424,7 +424,4 @@
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* 스크롤 스무스 */
-html {
-  scroll-behavior: smooth;
-} 
+/* 스크롤 스무스 */ 

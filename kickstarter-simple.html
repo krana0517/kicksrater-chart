@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kickstarter 대시보드</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .header p { font-size: 1.1rem; opacity: 0.9; }
+        .controls { padding: 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        .control-group label { font-weight: 600; color: #374151; font-size: 0.9rem; }
+        .control-group input, .control-group select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; min-width: 150px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 20px; background: #f8fafc; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #4f46e5; margin-bottom: 5px; }
+        .stat-label { color: #6b7280; font-size: 0.9rem; }
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px; }
+        .project-card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .project-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .project-image { height: 200px; background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%); display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 0.9rem; }
+        .project-content { padding: 20px; }
+        .project-category { display: inline-block; background: #dbeafe; color: #1e40af; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; margin-bottom: 10px; }
+        .project-title { font-size: 1.1rem; font-weight: 600; color: #111827; margin-bottom: 8px; line-height: 1.4; }
+        .project-description { color: #6b7280; font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .project-progress { margin-bottom: 15px; }
+        .progress-bar { width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981 0%, #059669 100%); transition: width 0.3s ease; }
+        .project-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .stat-item { text-align: center; }
+        .stat-value { font-weight: 600; color: #111827; font-size: 1rem; }
+        .stat-label { color: #6b7280; font-size: 0.8rem; }
+        .project-status { text-align: center; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+        .status-successful { background: #dcfce7; color: #166534; }
+        .status-failed { background: #fee2e2; color: #991b1b; }
+        .status-live { background: #fef3c7; color: #92400e; }
+        .loading { text-align: center; padding: 50px; color: #6b7280; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top: 4px solid #4f46e5; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .no-results { text-align: center; padding: 50px; color: #6b7280; }
+        .no-results h3 { margin-bottom: 10px; color: #374151; }
+        @media (max-width: 768px) { .controls { flex-direction: column; align-items: stretch; } .control-group { width: 100%; } .projects-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Kickstarter 대시보드</h1>
+            <p>프로젝트 데이터 분석 및 시각화</p>
+        </div>
+        <div class="controls">
+            <div class="control-group">
+                <label for="search">검색</label>
+                <input type="text" id="search" placeholder="프로젝트명 검색...">
+            </div>
+            <div class="control-group">
+                <label for="category">카테고리</label>
+                <select id="category">
+                    <option value="">전체</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="status">상태</label>
+                <select id="status">
+                    <option value="">전체</option>
+                    <option value="successful">성공</option>
+                    <option value="failed">실패</option>
+                    <option value="live">진행중</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="sort">정렬</label>
+                <select id="sort">
+                    <option value="pledged">모금액순</option>
+                    <option value="backers">후원자순</option>
+                    <option value="goal">목표액순</option>
+                    <option value="name">이름순</option>
+                </select>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-projects">-</div>
+                <div class="stat-label">총 프로젝트</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="successful-projects">-</div>
+                <div class="stat-label">성공한 프로젝트</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-pledged">-</div>
+                <div class="stat-label">총 모금액</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="success-rate">-</div>
+                <div class="stat-label">성공률</div>
+            </div>
+        </div>
+        <div id="projects-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>데이터를 불러오는 중...</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        let allProjects = [];
+        let filteredProjects = [];
+        async function loadData() {
+            try {
+                const response = await fetch('data/kickstarter.csv');
+                const csvText = await response.text();
+                const projects = parseCSV(csvText);
+                allProjects = projects.filter(project => {
+                    try {
+                        const category = JSON.parse(project.category || '{}');
+                        const parentName = (category.parent_name || '').toLowerCase();
+                        const categoryName = (category.name || '').toLowerCase();
+                        return !(parentName.includes('사진') || categoryName.includes('사진') || parentName.includes('photo') || categoryName.includes('photo') || parentName.includes('photography') || categoryName.includes('photography'));
+                    } catch { return true; }
+                });
+                allProjects = allProjects.filter((project, index, self) => index === self.findIndex(p => p.id === project.id));
+                updateStats();
+                updateCategories();
+                filterAndDisplayProjects();
+            } catch (error) {
+                console.error('데이터 로드 오류:', error);
+                document.getElementById('projects-container').innerHTML = '<div class="no-results"><h3>데이터를 불러올 수 없습니다</h3><p>CSV 파일을 확인해주세요.</p></div>';
+            }
+        }
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const projects = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = parseCSVLine(lines[i]);
+                    if (values.length === headers.length) {
+                        const project = {};
+                        headers.forEach((header, index) => { project[header] = values[index] ? values[index].replace(/"/g, '') : ''; });
+                        projects.push(project);
+                    }
+                }
+            }
+            return projects;
+        }
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') { inQuotes = !inQuotes; }
+                else if (char === ',' && !inQuotes) { result.push(current); current = ''; }
+                else { current += char; }
+            }
+            result.push(current);
+            return result;
+        }
+        function updateStats() {
+            const total = allProjects.length;
+            const successful = allProjects.filter(p => p.state === 'successful').length;
+            const totalPledged = allProjects.reduce((sum, p) => sum + parseFloat(p.pledged || 0), 0);
+            const successRate = total > 0 ? ((successful / total) * 100).toFixed(1) : 0;
+            document.getElementById('total-projects').textContent = total.toLocaleString();
+            document.getElementById('successful-projects').textContent = successful.toLocaleString();
+            document.getElementById('total-pledged').textContent = '$' + totalPledged.toLocaleString();
+            document.getElementById('success-rate').textContent = successRate + '%';
+        }
+        function updateCategories() {
+            const categories = [...new Set(allProjects.map(p => { try { const category = JSON.parse(p.category || '{}'); return category.parent_name || '기타'; } catch { return '기타'; } }).filter(Boolean))].sort();
+            const select = document.getElementById('category');
+            select.innerHTML = '<option value="">전체</option>';
+            categories.forEach(cat => { const option = document.createElement('option'); option.value = cat; option.textContent = cat; select.appendChild(option); });
+        }
+        function filterAndDisplayProjects() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const category = document.getElementById('category').value;
+            const status = document.getElementById('status').value;
+            const sort = document.getElementById('sort').value;
+            filteredProjects = allProjects.filter(project => {
+                if (search && !project.name.toLowerCase().includes(search)) { return false; }
+                if (category) { try { const catObj = JSON.parse(project.category || '{}'); if (catObj.parent_name !== category) { return false; } } catch { return false; } }
+                if (status && project.state !== status) { return false; }
+                return true;
+            });
+            filteredProjects.sort((a, b) => {
+                switch (sort) {
+                    case 'pledged': return parseFloat(b.pledged || 0) - parseFloat(a.pledged || 0);
+                    case 'backers': return parseInt(b.backers_count || 0) - parseInt(a.backers_count || 0);
+                    case 'goal': return parseFloat(b.goal || 0) - parseFloat(a.goal || 0);
+                    case 'name': return (a.name || '').localeCompare(b.name || '');
+                    default: return 0;
+                }
+            });
+            displayProjects();
+        }
+        function displayProjects() {
+            const container = document.getElementById('projects-container');
+            if (filteredProjects.length === 0) {
+                container.innerHTML = '<div class="no-results"><h3>검색 결과가 없습니다</h3><p>다른 검색어나 필터를 시도해보세요.</p></div>';
+                return;
+            }
+            const projectsHTML = filteredProjects.slice(0, 50).map(project => {
+                const pledged = parseFloat(project.pledged || 0);
+                const goal = parseFloat(project.goal || 0);
+                const backers = parseInt(project.backers_count || 0);
+                const percentage = goal > 0 ? Math.min((pledged / goal) * 100, 100) : 0;
+                let categoryName = '기타';
+                try { const category = JSON.parse(project.category || '{}'); categoryName = category.parent_name || '기타'; } catch {}
+                let statusClass = 'status-live';
+                let statusText = '진행중';
+                if (project.state === 'successful') { statusClass = 'status-successful'; statusText = '성공'; }
+                else if (project.state === 'failed') { statusClass = 'status-failed'; statusText = '실패'; }
+                return `<div class="project-card"><div class="project-image">이미지 없음</div><div class="project-content"><div class="project-category">${categoryName}</div><div class="project-title">${project.name || '제목 없음'}</div><div class="project-description">${project.blurb || '설명 없음'}</div><div class="project-progress"><div class="progress-bar"><div class="progress-fill" style="width: ${percentage}%"></div></div><div style="text-align: center; margin-top: 5px; font-size: 0.9rem; color: #6b7280;">${percentage.toFixed(1)}% 달성</div></div><div class="project-stats"><div class="stat-item"><div class="stat-value">$${pledged.toLocaleString()}</div><div class="stat-label">모금액</div></div><div class="stat-item"><div class="stat-value">${backers.toLocaleString()}</div><div class="stat-label">후원자</div></div></div><div class="project-status"><span class="status-badge ${statusClass}">${statusText}</span></div></div></div>`;
+            }).join('');
+            container.innerHTML = `<div class="projects-grid">${projectsHTML}</div>`;
+        }
+        document.getElementById('search').addEventListener('input', filterAndDisplayProjects);
+        document.getElementById('category').addEventListener('change', filterAndDisplayProjects);
+        document.getElementById('status').addEventListener('change', filterAndDisplayProjects);
+        document.getElementById('sort').addEventListener('change', filterAndDisplayProjects);
+        loadData();
+    </script>
+</body>
+</html> 

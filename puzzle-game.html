@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧩 이미지 퍼즐 & 아스키 아트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .puzzle-piece {
+            transition: all 0.2s ease;
+        }
+        
+        .puzzle-piece:hover {
+            border-color: #60a5fa !important;
+        }
+        
+        .puzzle-piece.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        
+        .ascii-art {
+            font-family: 'Courier New', monospace;
+            line-height: 0.75;
+            white-space: pre;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+        }
+        
+        .dark .gradient-bg {
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- 네비게이션 -->
+        <nav class="flex justify-between items-center mb-8">
+            <div class="text-2xl font-bold text-gray-800 dark:text-white">
+                🧩 이미지 퍼즐 & 아스키 아트
+            </div>
+            <a href="index.html" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                🌤️ 날씨 대시보드
+            </a>
+        </nav>
+
+        <!-- 탭 버튼 -->
+        <div class="flex gap-2 mb-6">
+            <button id="puzzle-tab" class="px-6 py-2 rounded-t-lg font-bold transition-colors bg-green-500 text-white">
+                🧩 퍼즐 게임
+            </button>
+            <button id="ascii-tab" class="px-6 py-2 rounded-t-lg font-bold transition-colors bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                🎨 아스키 아트 변환
+            </button>
+        </div>
+
+        <!-- 게임 정보 패널 -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <div class="flex flex-wrap gap-4 items-center justify-center">
+                <div class="flex gap-4 items-center">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 text-center w-24">
+                        <div id="timer" class="text-lg font-bold text-blue-600 dark:text-blue-400">
+                            ⏱️ 00:00
+                        </div>
+                        <div class="text-xs text-gray-600 dark:text-gray-300">
+                            경과 시간
+                        </div>
+                    </div>
+                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 text-center w-24">
+                        <div id="moves" class="text-lg font-bold text-green-600 dark:text-green-400">
+                            🎯 0
+                        </div>
+                        <div class="text-xs text-gray-600 dark:text-gray-300">
+                            이동 횟수
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <input type="file" accept="image/*" id="image-upload" class="hidden">
+                    <label for="image-upload" class="px-6 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors font-medium cursor-pointer">
+                        📁 이미지 업로드
+                    </label>
+                </div>
+
+                <button id="start-game" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium hidden">
+                    🎮 게임 시작
+                </button>
+
+                <button id="reset-game" class="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium">
+                    🔄 새 게임
+                </button>
+            </div>
+        </div>
+
+        <!-- 완성 메시지 -->
+        <div id="completion-message" class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 mb-8 text-center hidden">
+            <h2 class="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
+                🎉 퍼즐 완성!
+            </h2>
+            <p id="completion-text" class="text-green-600 dark:text-green-400">
+                축하합니다!
+            </p>
+        </div>
+
+        <!-- 퍼즐 게임 탭 -->
+        <div id="puzzle-content" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h2 id="puzzle-title" class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                이미지를 업로드하고 게임을 시작하세요
+            </h2>
+            
+            <div id="puzzle-container" class="flex justify-center">
+                <div id="puzzle-placeholder" class="flex justify-center items-center h-72 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <div class="text-center text-gray-500 dark:text-gray-400">
+                        <div class="text-6xl mb-4">📁</div>
+                        <p>이미지를 업로드해주세요</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 아스키 아트 탭 -->
+        <div id="ascii-content" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hidden">
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                🎨 아스키 아트 변환 결과
+            </h2>
+            <div id="ascii-container">
+                <div class="text-gray-500 dark:text-gray-400 text-center py-8">
+                    이미지를 업로드하면 아스키 아트로 변환됩니다.
+                </div>
+            </div>
+        </div>
+
+        <!-- 게임 방법 -->
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+                💡 게임 방법
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300">
+                <div>
+                    <h4 class="font-medium mb-2">1. 이미지 업로드</h4>
+                    <p>원하는 이미지 파일을 선택하여 업로드하세요.</p>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">2. 게임 시작</h4>
+                    <p>"게임 시작" 버튼을 클릭하면 이미지가 12조각으로 분할됩니다.</p>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">3. 퍼즐 맞추기</h4>
+                    <p>조각을 클릭한 채로 다른 조각 위에 드래그하여 위치를 바꾸세요.</p>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">4. 완성 확인</h4>
+                    <p>모든 조각이 올바른 위치에 놓이면 게임이 완료됩니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 게임 상태 변수
+        let selectedImage = null;
+        let puzzlePieces = [];
+        let isGameStarted = false;
+        let isGameCompleted = false;
+        let timer = 0;
+        let moves = 0;
+        let draggedPiece = null;
+        let imageDimensions = { width: 0, height: 0 };
+        let activeTab = 'puzzle';
+        let asciiArt = '';
+        let timerInterval = null;
+
+        // DOM 요소들
+        const puzzleTab = document.getElementById('puzzle-tab');
+        const asciiTab = document.getElementById('ascii-tab');
+        const puzzleContent = document.getElementById('puzzle-content');
+        const asciiContent = document.getElementById('ascii-content');
+        const imageUpload = document.getElementById('image-upload');
+        const startGameBtn = document.getElementById('start-game');
+        const resetGameBtn = document.getElementById('reset-game');
+        const timerDisplay = document.getElementById('timer');
+        const movesDisplay = document.getElementById('moves');
+        const completionMessage = document.getElementById('completion-message');
+        const completionText = document.getElementById('completion-text');
+        const puzzleTitle = document.getElementById('puzzle-title');
+        const puzzleContainer = document.getElementById('puzzle-container');
+        const puzzlePlaceholder = document.getElementById('puzzle-placeholder');
+        const asciiContainer = document.getElementById('ascii-container');
+
+        // 탭 전환
+        puzzleTab.addEventListener('click', () => setActiveTab('puzzle'));
+        asciiTab.addEventListener('click', () => setActiveTab('ascii'));
+
+        function setActiveTab(tab) {
+            activeTab = tab;
+            
+            // 탭 버튼 스타일 변경
+            if (tab === 'puzzle') {
+                puzzleTab.className = 'px-6 py-2 rounded-t-lg font-bold transition-colors bg-green-500 text-white';
+                asciiTab.className = 'px-6 py-2 rounded-t-lg font-bold transition-colors bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200';
+                puzzleContent.classList.remove('hidden');
+                asciiContent.classList.add('hidden');
+            } else {
+                asciiTab.className = 'px-6 py-2 rounded-t-lg font-bold transition-colors bg-green-500 text-white';
+                puzzleTab.className = 'px-6 py-2 rounded-t-lg font-bold transition-colors bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200';
+                asciiContent.classList.remove('hidden');
+                puzzleContent.classList.add('hidden');
+                
+                if (selectedImage && imageDimensions.width && imageDimensions.height) {
+                    generateAsciiArt(selectedImage, imageDimensions.width, imageDimensions.height);
+                }
+            }
+        }
+
+        // 이미지 업로드 처리
+        imageUpload.addEventListener('change', handleImageUpload);
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imageUrl = e.target.result;
+                    const img = new Image();
+                    img.onload = () => {
+                        imageDimensions = { width: img.width, height: img.height };
+                        selectedImage = imageUrl;
+                        createPuzzlePieces(imageUrl);
+                        startGameBtn.classList.remove('hidden');
+                        puzzlePlaceholder.classList.add('hidden');
+                        
+                        if (activeTab === 'ascii') {
+                            generateAsciiArt(imageUrl, img.width, img.height);
+                        }
+                    };
+                    img.src = imageUrl;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 퍼즐 조각 생성
+        function createPuzzlePieces(imageUrl) {
+            puzzlePieces = [];
+            for (let i = 0; i < 12; i++) {
+                puzzlePieces.push({
+                    id: i,
+                    currentPosition: i,
+                    correctPosition: i,
+                    imageUrl: imageUrl
+                });
+            }
+        }
+
+        // 게임 시작
+        startGameBtn.addEventListener('click', shufflePuzzle);
+
+        function shufflePuzzle() {
+            const shuffled = [...puzzlePieces];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i].currentPosition, shuffled[j].currentPosition] = 
+                [shuffled[j].currentPosition, shuffled[i].currentPosition];
+            }
+            puzzlePieces = shuffled;
+            isGameStarted = true;
+            isGameCompleted = false;
+            moves = 0;
+            timer = 0;
+            startTimer();
+            renderPuzzle();
+            puzzleTitle.textContent = '퍼즐 게임';
+        }
+
+        // 타이머 시작
+        function startTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            timerInterval = setInterval(() => {
+                timer++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        // 타이머 정지
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        // 타이머 표시 업데이트
+        function updateTimerDisplay() {
+            const mins = Math.floor(timer / 60);
+            const secs = timer % 60;
+            timerDisplay.textContent = `⏱️ ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // 이동 횟수 업데이트
+        function updateMovesDisplay() {
+            movesDisplay.textContent = `🎯 ${moves}`;
+        }
+
+        // 퍼즐 렌더링
+        function renderPuzzle() {
+            if (!selectedImage) return;
+
+            const puzzleSize = getPuzzleSize();
+            const pieceWidth = puzzleSize.width / 4;
+            const pieceHeight = puzzleSize.height / 3;
+
+            const puzzleGrid = document.createElement('div');
+            puzzleGrid.className = 'grid grid-cols-4 gap-1 bg-gray-200 dark:bg-gray-700 rounded-lg p-2';
+            puzzleGrid.style.width = puzzleSize.width + 'px';
+            puzzleGrid.style.height = puzzleSize.height + 'px';
+
+            for (let i = 0; i < 12; i++) {
+                const piece = puzzlePieces.find(p => p.currentPosition === i);
+                if (!piece) continue;
+
+                const row = Math.floor(piece.id / 4);
+                const col = piece.id % 4;
+
+                const pieceElement = document.createElement('div');
+                pieceElement.className = 'puzzle-piece bg-cover bg-center cursor-pointer border-2 border-gray-300 dark:border-gray-600 rounded transition-all duration-200';
+                pieceElement.style.width = (pieceWidth - 2) + 'px';
+                pieceElement.style.height = (pieceHeight - 2) + 'px';
+                pieceElement.style.backgroundImage = `url(${piece.imageUrl})`;
+                pieceElement.style.backgroundPosition = `${col * -100}% ${row * -100}%`;
+                pieceElement.style.backgroundSize = `${puzzleSize.width}px ${puzzleSize.height}px`;
+
+                if (isGameStarted) {
+                    pieceElement.addEventListener('mousedown', () => handlePieceMouseDown(piece.id));
+                    pieceElement.addEventListener('mouseup', handlePieceMouseUp);
+                    pieceElement.addEventListener('mouseenter', () => handlePieceMouseEnter(i));
+                }
+
+                puzzleGrid.appendChild(pieceElement);
+            }
+
+            puzzleContainer.innerHTML = '';
+            puzzleContainer.appendChild(puzzleGrid);
+        }
+
+        // 퍼즐 크기 계산
+        function getPuzzleSize() {
+            if (imageDimensions.width === 0 || imageDimensions.height === 0) {
+                return { width: 400, height: 300 };
+            }
+            
+            const maxWidth = 500;
+            const maxHeight = 400;
+            const aspectRatio = imageDimensions.width / imageDimensions.height;
+            
+            let width = maxWidth;
+            let height = width / aspectRatio;
+            
+            if (height > maxHeight) {
+                height = maxHeight;
+                width = height * aspectRatio;
+            }
+            
+            return { width: Math.round(width), height: Math.round(height) };
+        }
+
+        // 퍼즐 조각 드래그 처리
+        function handlePieceMouseDown(pieceId) {
+            if (!isGameStarted) return;
+            draggedPiece = pieceId;
+        }
+
+        function handlePieceMouseUp() {
+            draggedPiece = null;
+        }
+
+        function handlePieceMouseEnter(targetPosition) {
+            if (!isGameStarted || draggedPiece === null) return;
+            
+            const updatedPieces = [...puzzlePieces];
+            const draggedPieceObj = updatedPieces.find(p => p.id === draggedPiece);
+            const targetPieceObj = updatedPieces.find(p => p.currentPosition === targetPosition);
+            
+            if (draggedPieceObj && targetPieceObj && draggedPieceObj.currentPosition !== targetPosition) {
+                [draggedPieceObj.currentPosition, targetPieceObj.currentPosition] = 
+                [targetPieceObj.currentPosition, draggedPieceObj.currentPosition];
+                
+                puzzlePieces = updatedPieces;
+                moves++;
+                updateMovesDisplay();
+                renderPuzzle();
+                checkGameCompletion(updatedPieces);
+            }
+        }
+
+        // 게임 완성 확인
+        function checkGameCompletion(pieces) {
+            const isCompleted = pieces.every(piece => piece.currentPosition === piece.correctPosition);
+            if (isCompleted) {
+                isGameCompleted = true;
+                isGameStarted = false;
+                stopTimer();
+                showCompletionMessage();
+            }
+        }
+
+        // 완성 메시지 표시
+        function showCompletionMessage() {
+            const mins = Math.floor(timer / 60);
+            const secs = timer % 60;
+            const timeString = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            completionText.textContent = `축하합니다! ${timeString} 만에 ${moves}번의 이동으로 퍼즐을 완성했습니다!`;
+            completionMessage.classList.remove('hidden');
+        }
+
+        // 게임 리셋
+        resetGameBtn.addEventListener('click', resetGame);
+
+        function resetGame() {
+            selectedImage = null;
+            puzzlePieces = [];
+            isGameStarted = false;
+            isGameCompleted = false;
+            timer = 0;
+            moves = 0;
+            draggedPiece = null;
+            imageDimensions = { width: 0, height: 0 };
+            stopTimer();
+            
+            // UI 리셋
+            imageUpload.value = '';
+            startGameBtn.classList.add('hidden');
+            completionMessage.classList.add('hidden');
+            puzzlePlaceholder.classList.remove('hidden');
+            puzzleTitle.textContent = '이미지를 업로드하고 게임을 시작하세요';
+            puzzleContainer.innerHTML = '';
+            puzzleContainer.appendChild(puzzlePlaceholder);
+            asciiContainer.innerHTML = '<div class="text-gray-500 dark:text-gray-400 text-center py-8">이미지를 업로드하면 아스키 아트로 변환됩니다.</div>';
+            
+            updateTimerDisplay();
+            updateMovesDisplay();
+        }
+
+        // 아스키 아트 생성
+        function generateAsciiArt(imageUrl, width, height) {
+            const asciiChars = '@%#*+=-:. ';
+            const scale = 0.12;
+            const asciiWidth = Math.floor(width * scale);
+            const asciiHeight = Math.floor(height * scale * 0.5);
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = asciiWidth;
+            canvas.height = asciiHeight;
+            const ctx = canvas.getContext('2d');
+            
+            if (!ctx) return;
+            
+            const img = new Image();
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, asciiWidth, asciiHeight);
+                const imgData = ctx.getImageData(0, 0, asciiWidth, asciiHeight);
+                let ascii = '';
+                
+                for (let y = 0; y < asciiHeight; y++) {
+                    for (let x = 0; x < asciiWidth; x++) {
+                        const offset = (y * asciiWidth + x) * 4;
+                        const r = imgData.data[offset];
+                        const g = imgData.data[offset + 1];
+                        const b = imgData.data[offset + 2];
+                        const brightness = (r + g + b) / 3;
+                        const charIdx = Math.floor((brightness / 255) * (asciiChars.length - 1));
+                        ascii += asciiChars[charIdx];
+                    }
+                    ascii += '\n';
+                }
+                
+                asciiContainer.innerHTML = `<pre class="overflow-x-auto text-xs leading-3 font-mono bg-gray-100 dark:bg-gray-900 p-4 rounded-lg whitespace-pre ascii-art">${ascii}</pre>`;
+            };
+            img.src = imageUrl;
+        }
+
+        // 초기화
+        updateTimerDisplay();
+        updateMovesDisplay();
+    </script>
+</body>
+</html> 

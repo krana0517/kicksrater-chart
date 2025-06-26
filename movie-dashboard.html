@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 영화 추천 대시보드</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .api-section {
+            background: #fff3cd;
+            color: #856404;
+            padding: 20px 40px;
+            border-bottom: 1px solid #ffeaa7;
+            text-align: center;
+        }
+        
+        .api-input {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .api-input input {
+            padding: 10px 15px;
+            border: 2px solid #ffeaa7;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            min-width: 300px;
+        }
+        
+        .api-input button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .controls {
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px 40px;
+            background: white;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .movies {
+            padding: 40px;
+        }
+        
+        .movies h2 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .movie-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .movie-poster .no-image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .movie-rating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .movie-info {
+            padding: 25px;
+        }
+        
+        .movie-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .movie-meta {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .movie-overview {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .movie-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .genre-tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .movie-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-watch {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-watch:hover {
+            background: #218838;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .export-section {
+            padding: 20px 40px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group input, .input-group select {
+                min-width: auto;
+            }
+            
+            .movie-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 영화 추천 대시보드</h1>
+            <p>TMDB API를 활용한 영화 정보 및 추천 시스템</p>
+        </div>
+        
+        <div class="api-section">
+            <div>🔑 TMDB API 키가 필요합니다. <a href="https://www.themoviedb.org/settings/api" target="_blank">여기서 무료로 발급받으세요</a></div>
+            <div class="api-input">
+                <input type="text" id="apiKey" placeholder="TMDB API 키를 입력하세요" value="">
+                <button onclick="setAPIKey()">API 키 설정</button>
+                <button onclick="loadSampleData()" class="btn-secondary">샘플 데이터 로드</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="input-group">
+                <input type="text" id="searchTerm" placeholder="영화 제목 검색" onkeyup="searchMovies()">
+                <select id="categoryFilter" onchange="filterMovies()">
+                    <option value="">모든 카테고리</option>
+                    <option value="popular">인기 영화</option>
+                    <option value="top_rated">평점 높은 영화</option>
+                    <option value="upcoming">개봉 예정</option>
+                    <option value="now_playing">현재 상영 중</option>
+                </select>
+                <select id="genreFilter" onchange="filterMovies()">
+                    <option value="">모든 장르</option>
+                    <option value="28">액션</option>
+                    <option value="12">모험</option>
+                    <option value="16">애니메이션</option>
+                    <option value="35">코미디</option>
+                    <option value="80">범죄</option>
+                    <option value="99">다큐멘터리</option>
+                    <option value="18">드라마</option>
+                    <option value="10751">가족</option>
+                    <option value="14">판타지</option>
+                    <option value="36">역사</option>
+                    <option value="27">공포</option>
+                    <option value="10402">음악</option>
+                    <option value="9648">미스터리</option>
+                    <option value="10749">로맨스</option>
+                    <option value="878">SF</option>
+                    <option value="10770">TV 영화</option>
+                    <option value="53">스릴러</option>
+                    <option value="10752">전쟁</option>
+                    <option value="37">서부</option>
+                </select>
+                <button class="btn btn-primary" onclick="loadPopularMovies()">인기 영화 로드</button>
+                <button class="btn btn-success" onclick="loadTopRatedMovies()">평점 높은 영화</button>
+            </div>
+        </div>
+        
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalMovies">0</div>
+                <div class="stat-label">총 영화 수</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgRating">0.0</div>
+                <div class="stat-label">평균 평점</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalGenres">0</div>
+                <div class="stat-label">장르 수</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgYear">2024</div>
+                <div class="stat-label">평균 개봉년도</div>
+            </div>
+        </div>
+        
+        <div class="movies">
+            <h2>🎭 영화 목록</h2>
+            <div id="movieList" class="movie-grid">
+                <div class="loading">API 키를 설정하고 "인기 영화 로드" 버튼을 클릭하세요.</div>
+            </div>
+        </div>
+        
+        <div class="export-section">
+            <button class="btn btn-primary" onclick="exportToCSV()">📊 CSV 내보내기</button>
+            <button class="btn btn-primary" onclick="exportToJSON()">📄 JSON 내보내기</button>
+            <button class="btn btn-secondary" onclick="generateRecommendations()">🎯 추천 영화 생성</button>
+            <button class="btn btn-secondary" onclick="clearData()">🗑️ 데이터 초기화</button>
+        </div>
+    </div>
+
+    <script>
+        let moviesData = [];
+        let filteredData = [];
+        let apiKey = '';
+        
+        // 샘플 영화 데이터
+        const sampleMovies = [
+            {
+                id: 550,
+                title: "Fight Club",
+                original_title: "Fight Club",
+                overview: "A depressed man (Edward Norton) suffering from insomnia meets a strange soap salesman named Tyler Durden (Brad Pitt) and soon finds himself living in his squalid house after his perfect apartment is destroyed. The two bored men form an underground club with strict rules and fight other men who are fed up with their mundane lives. Their perfect partnership frays when Marla (Helena Bonham Carter), a fellow support group crasher, attracts Tyler's attention.",
+                poster_path: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",
+                backdrop_path: "/52AfXWuXCHn3UjD17rBruA9f5qb.jpg",
+                release_date: "1999-10-15",
+                vote_average: 8.8,
+                vote_count: 26280,
+                popularity: 61.416,
+                genre_ids: [18],
+                genres: [{id: 18, name: "드라마"}]
+            },
+            {
+                id: 13,
+                title: "Forrest Gump",
+                original_title: "Forrest Gump",
+                overview: "A man with a low IQ has accomplished great things in his life and been present during significant historic events—in each case, far exceeding what anyone imagined he could do. But despite all the things he has attained, his love for the girl he met in childhood (Robin Wright) never wavered.",
+                poster_path: "/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg",
+                backdrop_path: "/k2WyDw2NTUIWnuEs5gdm0nlQl1L.jpg",
+                release_date: "1994-07-06",
+                vote_average: 8.8,
+                vote_count: 24523,
+                popularity: 61.416,
+                genre_ids: [35, 18],
+                genres: [{id: 35, name: "코미디"}, {id: 18, name: "드라마"}]
+            },
+            {
+                id: 238,
+                title: "The Godfather",
+                original_title: "The Godfather",
+                overview: "Spanning the years 1945 to 1955, a chronicle of the fictional Italian-American Corleone crime family. When organized crime family patriarch, Vito Corleone barely survives an attempt on his life, his youngest son, Michael steps in to take care of the would-be killers, launching a campaign of bloody revenge.",
+                poster_path: "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
+                backdrop_path: "/tmU7GeKVybMWFButWEGl2M4GeiP.jpg",
+                release_date: "1972-03-14",
+                vote_average: 9.2,
+                vote_count: 18820,
+                popularity: 61.416,
+                genre_ids: [18, 80],
+                genres: [{id: 18, name: "드라마"}, {id: 80, name: "범죄"}]
+            }
+        ];
+        
+        function setAPIKey() {
+            const key = document.getElementById('apiKey').value.trim();
+            if (key) {
+                apiKey = key;
+                localStorage.setItem('tmdb_api_key', key);
+                showSuccess('API 키가 설정되었습니다!');
+            } else {
+                showError('API 키를 입력해주세요.');
+            }
+        }
+        
+        async function loadPopularMovies() {
+            if (!apiKey) {
+                showError('먼저 API 키를 설정해주세요.');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=ko-KR&page=1`;
+                const response = await fetch(url);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    moviesData = data.results;
+                    filteredData = data.results;
+                    displayMovies();
+                    updateStats();
+                    showSuccess(`${data.results.length}개의 인기 영화를 가져왔습니다!`);
+                } else {
+                    throw new Error(`API 호출 실패: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('API 호출 오류:', error);
+                showError(`API 호출에 실패했습니다: ${error.message}`);
+                
+                // 샘플 데이터로 대체
+                setTimeout(() => {
+                    showSuccess('샘플 데이터를 로드합니다.');
+                    loadSampleData();
+                }, 2000);
+            }
+        }
+        
+        async function loadTopRatedMovies() {
+            if (!apiKey) {
+                showError('먼저 API 키를 설정해주세요.');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const url = `https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}&language=ko-KR&page=1`;
+                const response = await fetch(url);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    moviesData = data.results;
+                    filteredData = data.results;
+                    displayMovies();
+                    updateStats();
+                    showSuccess(`${data.results.length}개의 평점 높은 영화를 가져왔습니다!`);
+                } else {
+                    throw new Error(`API 호출 실패: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('API 호출 오류:', error);
+                showError(`API 호출에 실패했습니다: ${error.message}`);
+            }
+        }
+        
+        function loadSampleData() {
+            moviesData = sampleMovies;
+            filteredData = sampleMovies;
+            displayMovies();
+            updateStats();
+            showSuccess('샘플 영화 데이터를 로드했습니다.');
+        }
+        
+        function displayMovies() {
+            const movieList = document.getElementById('movieList');
+            
+            if (filteredData.length === 0) {
+                movieList.innerHTML = '<div class="loading">검색 결과가 없습니다.</div>';
+                return;
+            }
+            
+            movieList.innerHTML = filteredData.map(movie => {
+                const posterUrl = movie.poster_path 
+                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                    : null;
+                
+                const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
+                const genres = movie.genres || [];
+                
+                return `
+                    <div class="movie-card">
+                        <div class="movie-poster">
+                            ${posterUrl ? 
+                                `<img src="${posterUrl}" alt="${movie.title}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'>🎬<br>${movie.title}</div>'">` :
+                                `<div class="no-image">🎬<br>${movie.title}</div>`
+                            }
+                            <div class="movie-rating">⭐ ${movie.vote_average.toFixed(1)}</div>
+                        </div>
+                        <div class="movie-info">
+                            <div class="movie-title">${movie.title}</div>
+                            <div class="movie-meta">${releaseYear} • ${movie.vote_count.toLocaleString()}명 평가</div>
+                            <div class="movie-overview">${movie.overview || '설명이 없습니다.'}</div>
+                            <div class="movie-genres">
+                                ${genres.map(genre => `<span class="genre-tag">${genre.name}</span>`).join('')}
+                            </div>
+                            <div class="movie-actions">
+                                <button class="btn-small btn-watch" onclick="watchMovie(${movie.id})">보기</button>
+                                <button class="btn-small btn-info" onclick="showMovieDetails(${movie.id})">상세정보</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateStats() {
+            const totalMovies = filteredData.length;
+            const avgRating = totalMovies > 0 ? 
+                (filteredData.reduce((sum, movie) => sum + movie.vote_average, 0) / totalMovies).toFixed(1) : 0;
+            
+            const allGenres = new Set();
+            filteredData.forEach(movie => {
+                if (movie.genres) {
+                    movie.genres.forEach(genre => allGenres.add(genre.name));
+                }
+            });
+            
+            const avgYear = totalMovies > 0 ? 
+                Math.round(filteredData.reduce((sum, movie) => {
+                    const year = movie.release_date ? parseInt(movie.release_date.split('-')[0]) : 2024;
+                    return sum + year;
+                }, 0) / totalMovies) : 2024;
+            
+            document.getElementById('totalMovies').textContent = totalMovies.toLocaleString();
+            document.getElementById('avgRating').textContent = avgRating;
+            document.getElementById('totalGenres').textContent = allGenres.size;
+            document.getElementById('avgYear').textContent = avgYear;
+        }
+        
+        function searchMovies() {
+            const searchTerm = document.getElementById('searchTerm').value.toLowerCase();
+            
+            filteredData = moviesData.filter(movie => 
+                movie.title.toLowerCase().includes(searchTerm) ||
+                movie.overview.toLowerCase().includes(searchTerm)
+            );
+            
+            displayMovies();
+            updateStats();
+        }
+        
+        function filterMovies() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const genreFilter = document.getElementById('genreFilter').value;
+            
+            filteredData = moviesData.filter(movie => {
+                const matchesCategory = !categoryFilter || true; // 카테고리는 이미 필터링됨
+                const matchesGenre = !genreFilter || 
+                    (movie.genres && movie.genres.some(genre => genre.id.toString() === genreFilter));
+                
+                return matchesCategory && matchesGenre;
+            });
+            
+            displayMovies();
+            updateStats();
+        }
+        
+        function watchMovie(movieId) {
+            const movie = moviesData.find(m => m.id === movieId);
+            if (movie) {
+                alert(`🎬 "${movie.title}" 영화를 시청합니다!\n\n실제로는 영화 스트리밍 서비스로 연결됩니다.`);
+            }
+        }
+        
+        function showMovieDetails(movieId) {
+            const movie = moviesData.find(m => m.id === movieId);
+            if (movie) {
+                const details = `
+🎬 영화 상세정보
+
+제목: ${movie.title}
+원제: ${movie.original_title}
+개봉일: ${movie.release_date}
+평점: ⭐ ${movie.vote_average}/10 (${movie.vote_count.toLocaleString()}명 평가)
+인기도: ${movie.popularity}
+
+줄거리:
+${movie.overview}
+
+장르: ${movie.genres ? movie.genres.map(g => g.name).join(', ') : 'N/A'}
+                `;
+                alert(details);
+            }
+        }
+        
+        function exportToCSV() {
+            if (filteredData.length === 0) {
+                showError('내보낼 데이터가 없습니다.');
+                return;
+            }
+            
+            const headers = ['제목', '원제', '개봉일', '평점', '평가수', '인기도', '줄거리', '장르'];
+            const csvContent = [
+                headers.join(','),
+                ...filteredData.map(movie => [
+                    `"${movie.title}"`,
+                    `"${movie.original_title}"`,
+                    `"${movie.release_date}"`,
+                    movie.vote_average,
+                    movie.vote_count,
+                    movie.popularity,
+                    `"${movie.overview || ''}"`,
+                    `"${movie.genres ? movie.genres.map(g => g.name).join(', ') : ''}"`
+                ].join(','))
+            ].join('\n');
+            
+            downloadFile(csvContent, 'movies.csv', 'text/csv');
+        }
+        
+        function exportToJSON() {
+            if (filteredData.length === 0) {
+                showError('내보낼 데이터가 없습니다.');
+                return;
+            }
+            
+            const jsonContent = JSON.stringify(filteredData, null, 2);
+            downloadFile(jsonContent, 'movies.json', 'application/json');
+        }
+        
+        function generateRecommendations() {
+            if (filteredData.length === 0) {
+                showError('추천할 데이터가 없습니다.');
+                return;
+            }
+            
+            // 평점이 높은 영화들을 추천
+            const recommendations = filteredData
+                .filter(movie => movie.vote_average >= 7.5)
+                .sort((a, b) => b.vote_average - a.vote_average)
+                .slice(0, 5);
+            
+            const recommendationText = recommendations.map((movie, index) => 
+                `${index + 1}. ${movie.title} (⭐ ${movie.vote_average})`
+            ).join('\n');
+            
+            alert(`🎯 추천 영화 TOP 5\n\n${recommendationText}`);
+        }
+        
+        function clearData() {
+            moviesData = [];
+            filteredData = [];
+            document.getElementById('searchTerm').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('genreFilter').value = '';
+            document.getElementById('movieList').innerHTML = '<div class="loading">API 키를 설정하고 "인기 영화 로드" 버튼을 클릭하세요.</div>';
+            updateStats();
+        }
+        
+        function downloadFile(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function showLoading() {
+            document.getElementById('movieList').innerHTML = '<div class="loading">영화 데이터를 가져오는 중...</div>';
+        }
+        
+        function showError(message) {
+            const movieList = document.getElementById('movieList');
+            movieList.innerHTML = `<div class="error">${message}</div>`;
+        }
+        
+        function showSuccess(message) {
+            const movieList = document.getElementById('movieList');
+            movieList.innerHTML = `<div class="success">${message}</div>`;
+        }
+        
+        // 페이지 로드 시 저장된 API 키 복원
+        window.onload = function() {
+            const savedApiKey = localStorage.getItem('tmdb_api_key');
+            if (savedApiKey) {
+                document.getElementById('apiKey').value = savedApiKey;
+                apiKey = savedApiKey;
+            }
+        };
+    </script>
+</body>
+</html> 

@@ -1,0 +1,430 @@
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap');
+
+/* 전체 컨테이너 */
+.container {
+  min-height: 100vh;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 헤더 */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.header.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+}
+
+.logo img {
+  height: 40px;
+  width: auto;
+}
+
+.nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 40px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.nav a:hover {
+  color: #c71a2e;
+}
+
+.consultButton {
+  background: #c71a2e;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.consultButton:hover {
+  background: #a0151f;
+  transform: translateY(-2px);
+}
+
+/* 히어로 섹션 */
+.hero {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 120px 20px 80px;
+  text-align: center;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroTitle {
+  margin-bottom: 30px;
+}
+
+.subtitle {
+  font-size: 20px;
+  color: #666;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.mainTitle {
+  font-size: 48px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.2;
+}
+
+.heroDescription {
+  font-size: 18px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 차이점 설명 섹션 */
+.differences {
+  background: #efefef;
+  padding: 60px 20px;
+}
+
+.differenceItem {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  text-align: center;
+}
+
+.differenceItem:last-child {
+  margin-bottom: 0;
+}
+
+.differenceItem h2 {
+  font-size: 30px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.highlight {
+  background: #c71a2e;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 5px;
+}
+
+.differenceItem img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* 성공 사례 카드 섹션 - 원본 구조 */
+.successCases {
+  padding: 80px 20px;
+  background: white;
+}
+
+.generalContainer {
+  display: flex;
+  height: 50rem;
+  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.radio {
+  display: none;
+}
+
+.content {
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+    url('https://cdn.imweb.me/upload/S20250610673e0fe87a538/83da9227c8262.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.content:hover {
+  transform: scale(1.02);
+}
+
+.radio:checked + .content {
+  flex: 3;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+    url('https://cdn.imweb.me/upload/S20250610673e0fe87a538/83da9227c8262.jpg');
+}
+
+.icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.fitPicture {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.cardTitle {
+  text-align: center;
+}
+
+.cardTitle .subtitle {
+  display: inline-block;
+  background: #c71a2e;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.cardTitle h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.cardTitle p {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.cardTitle h5 {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #ccc;
+  margin: 0;
+}
+
+.blue {
+  color: #c71a2e;
+  font-weight: 600;
+}
+
+/* 솔루션 섹션 */
+.solutions {
+  background: #191c28;
+  color: white;
+  padding: 80px 20px;
+}
+
+.solutionContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.solutionContent h2 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 50px;
+}
+
+.solutionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.solutionCard {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.solutionCard:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+}
+
+.solutionCard h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.solutionCard p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #ccc;
+}
+
+/* 세토웍스 소개 섹션 */
+.setoworks {
+  background: linear-gradient(135deg, #191c28 0%, #2d3748 100%);
+  color: white;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.setoworksContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.setoworksContent img {
+  width: 250px;
+  height: auto;
+  margin-bottom: 30px;
+}
+
+.setoworksContent h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.setoworksSubtitle {
+  font-size: 20px;
+  color: #c71a2e;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.setoworksDescription {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #ccc;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .headerContent {
+    padding: 0 15px;
+    height: 60px;
+  }
+
+  .logo img {
+    height: 30px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .hero {
+    padding: 100px 15px 60px;
+  }
+
+  .mainTitle {
+    font-size: 32px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .heroDescription {
+    font-size: 16px;
+  }
+
+  .differenceItem h2 {
+    font-size: 24px;
+  }
+
+  .generalContainer {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .content {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .radio:checked + .content {
+    flex: 1;
+  }
+
+  .solutionGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .setoworksContent h2 {
+    font-size: 22px;
+  }
+
+  .setoworksSubtitle {
+    font-size: 18px;
+  }
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.content,
+.differenceItem,
+.solutionCard {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* 스크롤 스무스 */
+html {
+  scroll-behavior: smooth;
+} 

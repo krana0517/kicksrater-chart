@@ -183,6 +183,22 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+        @keyframes markerFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0px); }
+            50% { transform: translateX(-50%) translateY(-3px); }
+        }
+        @keyframes labelFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0px); }
+            50% { transform: translateX(-50%) translateY(-2px); }
+        }
+        @keyframes markerFloatSimple {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+            50% { transform: translate(-50%, -50%) translateY(-3px); }
+        }
+        @keyframes labelFloatSimple {
+            0%, 100% { transform: translateX(-50%) translateY(0px); }
+            50% { transform: translateX(-50%) translateY(-2px); }
+        }
         .stat-label {
             color: #047857;
             font-size: 0.9rem;
@@ -195,10 +211,11 @@
         }
         .project-card {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
             min-width: 0;
             display: flex;
             flex-direction: column;
@@ -239,8 +256,10 @@
             line-height: 1.2;
             vertical-align: middle;
             margin-right: 6px;
-            height: 24px;
+            height: 32px;
             box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
         }
         
         /* 카테고리별 색상 정의 */
@@ -261,7 +280,8 @@
         
         /* 성공 태그 반짝임 애니메이션 */
         .status-successful {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             padding: 4px 12px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -271,6 +291,8 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+            height: 32px;
+            box-sizing: border-box;
         }
         
         .status-successful::before {
@@ -286,7 +308,8 @@
         
         /* 실패 태그 강조 */
         .status-failed {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             padding: 4px 12px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -294,11 +317,14 @@
             color: #ffffff;
             font-weight: 600;
             box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+            height: 32px;
+            box-sizing: border-box;
         }
         
         /* 진행중 태그 강조 */
         .status-live {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             padding: 4px 12px;
             border-radius: 12px;
             font-size: 0.8rem;
@@ -306,6 +332,8 @@
             color: #ffffff;
             font-weight: 600;
             box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+            height: 32px;
+            box-sizing: border-box;
         }
         
         /* 광택 애니메이션 키프레임 */
@@ -427,7 +455,7 @@
             height: 8px;
             background: #d1fae5;
             border-radius: 4px;
-            overflow: hidden;
+            overflow: visible !important;
         }
         
         .progress-fill {
@@ -467,9 +495,215 @@
             font-size: 1rem;
         }
         
+        .project-stats {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+            min-height: 38px;
+        }
+        
+        .stat-item {
+            text-align: left;
+            flex: 1 1 0;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #059669;
+            font-size: 1rem;
+        }
+        
         .stat-label {
             color: #047857;
             font-size: 0.8rem;
+        }
+        
+        /* 프로젝트 세부페이지 스타일 */
+        .detail-header {
+            padding: 20px;
+            background: #f0fdf4;
+            border-bottom: 1px solid #a7f3d0;
+        }
+        
+        .back-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .back-button:hover {
+            background: #059669;
+        }
+        
+        .detail-container {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .detail-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        
+        .detail-image-section {
+            position: sticky;
+            top: 20px;
+        }
+        
+        .detail-image {
+            width: auto;
+            height: auto;
+            background: transparent;
+            border-radius: 12px;
+            overflow: visible;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .detail-image img {
+            max-width: 100%;
+            max-height: 500px;
+            width: auto;
+            height: auto;
+            object-fit: none;
+            border-radius: 12px;
+        }
+        
+        .detail-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .detail-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .detail-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #065f46;
+            line-height: 1.3;
+        }
+        
+        .detail-category {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .detail-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #047857;
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #10b981;
+        }
+        
+        .detail-progress {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .detail-progress h3 {
+            color: #065f46;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .detail-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .detail-stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .detail-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+        
+        .detail-stat-label {
+            color: #047857;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        /* 목표 마커 스타일 */
+        .goal-marker {
+            position: absolute !important;
+            width: 16px !important;
+            height: 16px !important;
+            z-index: 99999 !important;
+            pointer-events: none !important;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)) !important;
+        }
+        
+        .goal-label {
+            position: absolute !important;
+            background: #10b981 !important;
+            color: white !important;
+            padding: 3px 6px !important;
+            border-radius: 4px !important;
+            font-size: 0.7rem !important;
+            white-space: nowrap !important;
+            z-index: 99999 !important;
+            pointer-events: none !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .detail-main {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .detail-image-section {
+                position: static;
+            }
+            
+            .detail-image {
+                max-height: 350px;
+            }
+            
+            .detail-image img {
+                max-height: 350px;
+            }
+            
+            .detail-title {
+                font-size: 1.5rem;
+            }
+            
+            .detail-stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -482,12 +716,12 @@
         
         <div class="tab-container">
             <div class="tab-buttons">
-                <button class="tab-button active" data-tab="stats">통계</button>
-                <button class="tab-button" data-tab="projects">프로젝트</button>
+                <button class="tab-button active" onclick="showTab('stats')">통계</button>
+                <button class="tab-button" onclick="showTab('projects')">프로젝트</button>
             </div>
         </div>
         
-        <div class="tab-content active" id="stats">
+        <div class="tab-content" id="stats" style="display: block;">
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number" id="total-projects">-</div>
@@ -506,7 +740,6 @@
                     <div class="stat-label">성공률</div>
                 </div>
             </div>
-            
             <div class="chart-section">
                 <h3>🏷️ 카테고리별 분석</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -524,7 +757,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="chart-section">
                 <h3>🌍 국가별 분포</h3>
                 <div class="chart-container">
@@ -534,7 +766,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="chart-section">
                 <h3>📊 성공률 분석</h3>
                 <div class="chart-container">
@@ -544,7 +775,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="chart-section">
                 <h3>💰 모금액 분포</h3>
                 <div class="chart-container">
@@ -556,7 +786,7 @@
             </div>
         </div>
         
-        <div class="tab-content" id="projects">
+        <div class="tab-content" id="projects" style="display: none;">
             <div class="controls">
                 <div class="category-tabs" id="category-tabs">
                     <!-- 카테고리 탭들이 여기에 동적으로 생성됩니다 -->
@@ -595,6 +825,49 @@
                 </div>
             </div>
         </div>
+        
+        <!-- 프로젝트 세부페이지 -->
+        <div class="tab-content" id="project-detail" style="display: none;">
+            <div class="detail-header">
+                <button class="back-button" onclick="goBackToProjects()">
+                    ← 뒤로가기
+                </button>
+            </div>
+            
+            <div class="detail-container">
+                <div class="detail-main">
+                    <div class="detail-image-section">
+                        <div class="detail-image" id="detail-image">
+                            <!-- 프로젝트 이미지가 여기에 표시됩니다 -->
+                        </div>
+                        <div class="detail-progress" id="detail-progress">
+                            <!-- 진행률 정보가 여기에 표시됩니다 -->
+                        </div>
+                        <div class="detail-stats" id="detail-stats">
+                            <!-- 통계 정보가 여기에 표시됩니다 -->
+                        </div>
+                    </div>
+                    
+                    <div class="detail-content">
+                        <div class="detail-title" id="detail-title">
+                            <!-- 프로젝트 제목이 여기에 표시됩니다 -->
+                        </div>
+                        
+                        <div class="detail-category" id="detail-category">
+                            <!-- 카테고리와 상태가 여기에 표시됩니다 -->
+                        </div>
+                        
+                        <div class="detail-description" id="detail-description">
+                            <!-- 프로젝트 설명이 여기에 표시됩니다 -->
+                        </div>
+                        
+                        <div class="detail-badges" id="detail-badges">
+                            <!-- 프로젝트 뱃지들이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
         let allProjects = [];
@@ -604,7 +877,6 @@
         const projectsPerPage = 20;
         let isLoading = false;
         let hasMoreProjects = true;
-        let charts = {}; // 차트 객체들을 저장할 변수
         
         const fixedCategories = [
             "Art", "Comics", "Crafts", "Dance", "Design", "Fashion", "Food", "Games", "Journalism", "Music", "Publishing", "Technology", "Theater", "기타"
@@ -636,7 +908,7 @@
         }
         async function loadData() {
             try {
-                const response = await fetch('data/kickstarter.csv');
+                const response = await fetch('/kickstarter.csv');
                 const csvText = await response.text();
                 const projects = parseCSV(csvText);
                 // 전체 탭에서는 사진/photography만 제외하고 모두 노출
@@ -661,7 +933,7 @@
                 filterAndDisplayProjects();
             } catch (error) {
                 console.error('데이터 로드 오류:', error);
-                document.getElementById('projects-container').innerHTML = '<div class="no-results"><h3>데이터를 불러올 수 없습니다</h3><p>CSV 파일을 확인해주세요.</p></div>';
+                document.getElementById('projects-container').innerHTML = '<div class="no-results"><h3>데이터를 불러올 수 없습니다</h3><p>CSV 파일을 확인해주세요. 오류: ' + error.message + '</p></div>';
             }
         }
         function parseCSV(csvText) {
@@ -682,11 +954,7 @@
             animateCounter('success-rate', 0, parseFloat(successRate), 1500, false, '%');
             
             // 차트 업데이트
-            updateCategoryChart();
-            updateCategorySuccessChart();
-            updateCountryChart();
-            updateStateChart();
-            updatePledgedChart();
+            setTimeout(updateCharts, 500);
         }
         
         function animateCounter(elementId, start, end, duration, isCurrency = false, suffix = '') {
@@ -728,449 +996,6 @@
             }
             
             requestAnimationFrame(updateCounter);
-        }
-        function updateCategoryChart() {
-            const categoryCount = {};
-            allProjects.forEach(project => {
-                try {
-                    const category = JSON.parse(project.category || '{}');
-                    const parentName = category.parent_name || '기타';
-                    categoryCount[parentName] = (categoryCount[parentName] || 0) + 1;
-                } catch {
-                    categoryCount['기타'] = (categoryCount['기타'] || 0) + 1;
-                }
-            });
-            
-            const sortedCategories = Object.entries(categoryCount)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 8);
-            
-            const labels = sortedCategories.map(([category]) => category);
-            const data = sortedCategories.map(([, count]) => count);
-            
-            // 초록색 계열 색상 팔레트
-            const colors = [
-                '#10b981', '#059669', '#047857', '#065f46',
-                '#064e3b', '#022c22', '#a7f3d0', '#86efac'
-            ];
-            
-            if (charts.categoryChart) {
-                charts.categoryChart.destroy();
-            }
-            
-            const ctx = document.getElementById('category-chart').getContext('2d');
-            charts.categoryChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: colors,
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                    return `${context.label}: ${context.parsed.toLocaleString()} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateCategorySuccessChart() {
-            const categoryTotalCount = {};
-            const categorySuccessCount = {};
-            
-            allProjects.forEach(project => {
-                try {
-                    const category = JSON.parse(project.category || '{}');
-                    const parentName = category.parent_name || '기타';
-                    
-                    // 전체 프로젝트 수 카운트
-                    categoryTotalCount[parentName] = (categoryTotalCount[parentName] || 0) + 1;
-                    
-                    // 성공한 프로젝트 수 카운트
-                    if (project.state === 'successful') {
-                        categorySuccessCount[parentName] = (categorySuccessCount[parentName] || 0) + 1;
-                    }
-                } catch {
-                    categoryTotalCount['기타'] = (categoryTotalCount['기타'] || 0) + 1;
-                    if (project.state === 'successful') {
-                        categorySuccessCount['기타'] = (categorySuccessCount['기타'] || 0) + 1;
-                    }
-                }
-            });
-            
-            // 성공률이 높은 순으로 정렬 (최소 10개 이상의 프로젝트가 있는 카테고리만)
-            const categorySuccessRate = {};
-            Object.keys(categoryTotalCount).forEach(category => {
-                if (categoryTotalCount[category] >= 10) {
-                    const successRate = (categorySuccessCount[category] || 0) / categoryTotalCount[category];
-                    categorySuccessRate[category] = successRate;
-                }
-            });
-            
-            const sortedCategories = Object.entries(categorySuccessRate)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 8);
-            
-            const labels = sortedCategories.map(([category]) => category);
-            const totalData = sortedCategories.map(([category]) => categoryTotalCount[category]);
-            const successData = sortedCategories.map(([category]) => categorySuccessCount[category] || 0);
-            
-            if (charts.categorySuccessChart) {
-                charts.categorySuccessChart.destroy();
-            }
-            
-            const ctx = document.getElementById('category-success-chart').getContext('2d');
-            charts.categorySuccessChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: '성공한 프로젝트',
-                            data: successData,
-                            backgroundColor: '#10b981',
-                            borderColor: '#059669',
-                            borderWidth: 0,
-                            borderRadius: 4
-                        },
-                        {
-                            label: '전체 프로젝트',
-                            data: totalData,
-                            backgroundColor: '#a7f3d0',
-                            borderColor: '#86efac',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                usePointStyle: true,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            enabled: true,
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#ffffff',
-                            bodyColor: '#ffffff',
-                            borderColor: '#10b981',
-                            borderWidth: 1,
-                            cornerRadius: 8,
-                            displayColors: true,
-                            callbacks: {
-                                title: function(context) {
-                                    return context[0].label;
-                                },
-                                label: function(context) {
-                                    const label = context.dataset.label || '';
-                                    const value = context.parsed.y;
-                                    return `${label}: ${value.toLocaleString()}개`;
-                                },
-                                afterBody: function(context) {
-                                    if (context.length >= 2) {
-                                        const total = context[1].parsed.y;
-                                        const success = context[0].parsed.y;
-                                        const rate = ((success / total) * 100).toFixed(1);
-                                        return `성공률: ${rate}%`;
-                                    }
-                                    return '';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            stacked: true,
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 0,
-                                font: {
-                                    size: 11
-                                },
-                                color: '#374151'
-                            },
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString();
-                                },
-                                font: {
-                                    size: 11
-                                },
-                                color: '#6b7280'
-                            },
-                            grid: {
-                                color: '#e5e7eb'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateCountryChart() {
-            const countryCount = {};
-            allProjects.forEach(project => {
-                const country = project.country_displayable_name || project.country || '기타';
-                countryCount[country] = (countryCount[country] || 0) + 1;
-            });
-            
-            const sortedCountries = Object.entries(countryCount)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 10);
-            
-            const labels = sortedCountries.map(([country]) => country);
-            const data = sortedCountries.map(([, count]) => count);
-            
-            if (charts.countryChart) {
-                charts.countryChart.destroy();
-            }
-            
-            const ctx = document.getElementById('country-chart').getContext('2d');
-            charts.countryChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '프로젝트 수',
-                        data: data,
-                        backgroundColor: '#10b981',
-                        borderColor: '#059669',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `프로젝트: ${context.parsed.y.toLocaleString()}개`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString();
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 0
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updateStateChart() {
-            const stateCount = {};
-            allProjects.forEach(project => {
-                const state = project.state || 'unknown';
-                stateCount[state] = (stateCount[state] || 0) + 1;
-            });
-            
-            const stateLabels = {
-                'successful': '성공',
-                'failed': '실패',
-                'live': '진행중',
-                'canceled': '취소',
-                'unknown': '기타'
-            };
-            
-            // 초록색 계열 색상 (성공은 진한 초록, 나머지는 연한 초록 계열)
-            const colors = {
-                'successful': '#10b981',
-                'failed': '#a7f3d0',
-                'live': '#86efac',
-                'canceled': '#bbf7d0',
-                'unknown': '#d1fae5'
-            };
-            
-            const labels = Object.keys(stateCount).map(state => stateLabels[state] || state);
-            const data = Object.keys(stateCount).map(state => stateCount[state]);
-            const backgroundColor = Object.keys(stateCount).map(state => colors[state] || '#f0fdf4');
-            
-            if (charts.stateChart) {
-                charts.stateChart.destroy();
-            }
-            
-            const ctx = document.getElementById('state-chart').getContext('2d');
-            charts.stateChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: backgroundColor,
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                    return `${context.label}: ${context.parsed.toLocaleString()} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
-        function updatePledgedChart() {
-            const ranges = [
-                { min: 0, max: 1000, label: '$0 - $1K' },
-                { min: 1000, max: 10000, label: '$1K - $10K' },
-                { min: 10000, max: 100000, label: '$10K - $100K' },
-                { min: 100000, max: 1000000, label: '$100K - $1M' },
-                { min: 1000000, max: Infinity, label: '$1M+' }
-            ];
-            
-            const rangeCount = {};
-            ranges.forEach(range => rangeCount[range.label] = 0);
-            
-            allProjects.forEach(project => {
-                const pledged = parseFloat(project.pledged || 0);
-                for (const range of ranges) {
-                    if (pledged >= range.min && pledged < range.max) {
-                        rangeCount[range.label]++;
-                        break;
-                    }
-                }
-            });
-            
-            const labels = Object.keys(rangeCount);
-            const data = Object.values(rangeCount);
-            
-            if (charts.pledgedChart) {
-                charts.pledgedChart.destroy();
-            }
-            
-            const ctx = document.getElementById('pledged-chart').getContext('2d');
-            charts.pledgedChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '프로젝트 수',
-                        data: data,
-                        backgroundColor: [
-                            '#10b981', '#059669', '#047857', '#065f46', '#064e3b'
-                        ],
-                        borderColor: [
-                            '#059669', '#047857', '#065f46', '#064e3b', '#022c22'
-                        ],
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `프로젝트: ${context.parsed.y.toLocaleString()}개`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString();
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 0
-                            }
-                        }
-                    }
-                }
-            });
         }
         function filterAndDisplayProjects() {
             const search = document.getElementById('search').value.toLowerCase();
@@ -1275,7 +1100,7 @@
                     <span class=\"${statusClass}\">${statusText}</span>
                 </div>`;
                 
-                return `<div class=\"project-card\" style=\"position:relative;\">
+                return `<div class=\"project-card\" style=\"position:relative;\" onclick=\"showProjectDetail(${JSON.stringify(project).replace(/"/g, '&quot;')})\">
                     <div class=\"project-image\" style=\"position:relative;\">
                         ${imageUrl ? `<img src=\"${imageUrl}\" alt=\"썸네일\">` : '이미지 없음'}
                         ${isWeLove ? '<span style=\"position:absolute;top:10px;left:10px;z-index:2;background:#fbbf24;color:#92400e;padding:4px 12px;border-radius:12px;font-size:0.8rem;font-weight:500;box-shadow:0 2px 8px rgba(0,0,0,0.08);\">Project We Love</span>' : ''}
@@ -1350,8 +1175,8 @@
         // 스크롤 이벤트 리스너
         function handleScroll() {
             // 현재 활성 탭이 프로젝트 탭인지 확인
-            const activeTab = document.querySelector('.tab-content.active');
-            if (!activeTab || activeTab.id !== 'projects') {
+            const projectsTab = document.getElementById('projects');
+            if (!projectsTab || projectsTab.style.display === 'none') {
                 return;
             }
             
@@ -1362,42 +1187,39 @@
         }
         
         // 탭 전환 함수
-        function switchTab(tabName) {
-            // 모든 탭 버튼에서 active 클래스 제거
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // 모든 탭 컨텐츠에서 active 클래스 제거
+        function showTab(tabName) {
+            // 모든 탭 컨텐츠 숨기기
             document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
+                content.style.display = 'none';
             });
             
-            // 선택된 탭 버튼과 컨텐츠에 active 클래스 추가
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            document.getElementById(tabName).classList.add('active');
+            // 모든 탭 버튼 비활성화
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
             
-            // 프로젝트 탭으로 전환 시 카테고리를 전체로 초기화하고 무한 스크롤 재설정
+            // 선택된 탭 활성화
+            document.getElementById(tabName).style.display = 'block';
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            
+            // 프로젝트 탭인 경우 카테고리 탭들도 표시
             if (tabName === 'projects') {
-                window.scrollTo(0, 0);
-                selectedCategory = ''; // 카테고리를 전체로 초기화
-                renderCategoryTabs(); // 카테고리 탭 UI 업데이트
-                currentDisplayCount = 0;
-                displayedProjects = [];
-                hasMoreProjects = true;
-                isLoading = false;
-                filterAndDisplayProjects(); // 전체 프로젝트로 필터링
+                document.getElementById('category-tabs').style.display = 'flex';
+            } else {
+                document.getElementById('category-tabs').style.display = 'none';
+            }
+            
+            // 통계 탭인 경우 카운트 애니메이션 실행
+            if (tabName === 'stats') {
+                setTimeout(() => {
+                    updateStats();
+                }, 100);
             }
         }
         
         // 탭 버튼 이벤트 리스너 추가
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const tabName = this.getAttribute('data-tab');
-                    switchTab(tabName);
-                });
-            });
+            // 기존 탭 이벤트 리스너 제거 - onclick 속성으로 대체됨
         });
         
         document.getElementById('search').addEventListener('input', filterAndDisplayProjects);
@@ -1408,6 +1230,491 @@
         window.addEventListener('scroll', handleScroll);
         
         loadData();
+        
+        // 프로젝트 세부페이지 표시 함수
+        function showProjectDetail(project) {
+            // 현재 스크롤 위치 저장
+            window.scrollPosition = window.scrollY;
+            
+            // 모든 탭 컨텐츠 숨기기
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // 상단 탭 버튼들 숨기기
+            document.querySelector('.tab-container').style.display = 'none';
+            
+            // 세부페이지 표시
+            document.getElementById('project-detail').style.display = 'block';
+            
+            // 프로젝트 데이터로 세부페이지 채우기
+            fillProjectDetail(project);
+        }
+        
+        // 프로젝트 세부페이지 데이터 채우기 함수
+        function fillProjectDetail(project) {
+            const pledged = parseFloat(project.pledged || 0);
+            const goal = parseFloat(project.goal || 0);
+            const backers = parseInt(project.backers_count || 0);
+            const percentage = goal > 0 ? (pledged / goal) * 100 : 0;
+            
+            let categoryName = '기타';
+            try { 
+                const category = JSON.parse(project.category || '{}'); 
+                categoryName = category.parent_name || '기타'; 
+            } catch {}
+            
+            let imageUrl = '';
+            try {
+                const photo = JSON.parse(project.photo || '{}');
+                imageUrl = photo.full || photo.key || '';
+            } catch {}
+            
+            let statusClass = 'status-live';
+            let statusText = '진행중';
+            if (project.state === 'successful') { statusClass = 'status-successful'; statusText = '성공'; }
+            else if (project.state === 'failed') { statusClass = 'status-failed'; statusText = '실패'; }
+            
+            const isWeLove = project.staff_pick === 'true' || project.staff_pick === true;
+            
+            // 카테고리 클래스 가져오기
+            function getCategoryClass(categoryName) {
+                const categoryMap = {
+                    'Art': 'category-art',
+                    'Comics': 'category-comics',
+                    'Crafts': 'category-crafts',
+                    'Dance': 'category-dance',
+                    'Design': 'category-design',
+                    'Fashion': 'category-fashion',
+                    'Food': 'category-food',
+                    'Games': 'category-games',
+                    'Journalism': 'category-journalism',
+                    'Music': 'category-music',
+                    'Publishing': 'category-publishing',
+                    'Technology': 'category-technology',
+                    'Theater': 'category-theater'
+                };
+                return categoryMap[categoryName] || 'category-other';
+            }
+            
+            const categoryClass = getCategoryClass(categoryName);
+            
+            // 이미지 섹션
+            document.getElementById('detail-image').innerHTML = 
+                imageUrl ? `<img src="${imageUrl}" alt="프로젝트 이미지">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6b7280;">이미지 없음</div>';
+            
+            // 제목
+            document.getElementById('detail-title').textContent = project.name || '제목 없음';
+            
+            // 카테고리와 상태 (이제 뱃지 섹션으로 이동했으므로 빈 div로 유지)
+            document.getElementById('detail-category').innerHTML = '';
+            
+            // 설명
+            document.getElementById('detail-description').textContent = project.blurb || '설명 없음';
+            
+            // 뱃지 섹션 (설명문 하단)
+            const badgesHTML = [];
+            if (isWeLove) {
+                badgesHTML.push('<span style="background:#fbbf24;color:#92400e;padding:6px 16px;border-radius:12px;font-size:0.9rem;font-weight:500;height:32px;display:inline-flex;align-items:center;">Project We Love</span>');
+            }
+            badgesHTML.push(`<span class="project-category ${categoryClass}" style="height:32px;display:inline-flex;align-items:center;">${categoryName}</span>`);
+            badgesHTML.push(`<span class="${statusClass}" style="height:32px;display:inline-flex;align-items:center;">${statusText}</span>`);
+            document.getElementById('detail-badges').innerHTML = badgesHTML.join('');
+            
+            // 진행률 (썸네일 밑)
+            const goalPercentage = pledged > 0 ? (goal / pledged) * 100 : 0;
+            const maxPercentage = Math.max(percentage, 100);
+            const goalPosition = Math.min(100, (goal / pledged) * 100);
+            
+            document.getElementById('detail-progress').innerHTML = `
+                <h3>모금 진행률</h3>
+                <div class="progress-container" style="position: relative; margin-bottom: 15px; padding-top: 30px; overflow: visible;">
+                    <div class="progress-bar" style="position: relative; overflow: visible;">
+                        <div class="progress-goal-light" style="position: absolute; left: 0; top: 0; width: 0%; height: 100%; background: #a7f3d0; border-radius: 8px; transition: width 1.5s ease-out;"></div>
+                        <div class="progress-goal-dark" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #10b981; border-radius: 8px;"></div>
+                        <svg class="goal-marker" style="left: 0%; top: 50%; transform: translate(-50%, -50%); transition: left 1.5s ease-out;">
+                            <circle cx="8" cy="8" r="7" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="goal-label" style="left: 0%; top: -10px; transform: translateX(-50%); animation: labelFloatSimple 2s ease-in-out infinite; transition: left 1.5s ease-out;">
+                        목표
+                        <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 3px solid transparent; border-right: 3px solid transparent; border-top: 3px solid #10b981;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">${percentage.toFixed(1)}%</div>
+                        <div style="color: #6b7280; font-size: 0.9rem;">달성률</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.2rem; font-weight: 600; color: #065f46;">$${pledged.toLocaleString()}</div>
+                        <div style="color: #6b7280; font-size: 0.9rem;">목표: $${goal.toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+            
+            // 애니메이션 시작
+            setTimeout(() => {
+                const progressGoalLight = document.querySelector('.progress-goal-light');
+                const goalMarker = document.querySelector('.goal-marker');
+                const goalLabel = document.querySelector('.goal-label');
+                
+                if (progressGoalLight) {
+                    // 목표금액까지의 넓이 (연한 색상)
+                    const goalWidth = Math.min(goalPosition, Math.min(percentage, 100));
+                    progressGoalLight.style.width = `${goalWidth}%`;
+                }
+                if (goalMarker) {
+                    goalMarker.style.left = `${goalPosition}%`;
+                }
+                if (goalLabel) {
+                    goalLabel.style.left = `${goalPosition}%`;
+                }
+            }, 100);
+            
+            // 통계 (썸네일 밑)
+            const averagePledge = backers > 0 ? pledged / backers : 0;
+            document.getElementById('detail-stats').innerHTML = `
+                <div class="detail-stat-card">
+                    <div class="detail-stat-value">${backers.toLocaleString()}</div>
+                    <div class="detail-stat-label">후원자 수</div>
+                </div>
+                <div class="detail-stat-card">
+                    <div class="detail-stat-value">$${Math.floor(averagePledge).toLocaleString()}</div>
+                    <div class="detail-stat-label">1인당 후원금</div>
+                </div>
+            `;
+        }
+        
+        // 프로젝트 목록으로 돌아가기 함수
+        function goBackToProjects() {
+            // 세부페이지 숨기기
+            document.getElementById('project-detail').style.display = 'none';
+            
+            // 상단 탭 버튼들 다시 표시
+            document.querySelector('.tab-container').style.display = 'block';
+            
+            // 프로젝트 탭 표시
+            document.getElementById('projects').style.display = 'block';
+            
+            // 스크롤 위치 복원
+            window.scrollTo(0, window.scrollPosition);
+        }
+
+        let charts = {}; // 차트 객체들을 저장할 변수
+
+        function updateCategoryChart() {
+            const ctx = document.getElementById('category-chart');
+            if (!ctx) return;
+            
+            // 기존 차트가 있으면 제거
+            if (charts.categoryChart) {
+                charts.categoryChart.destroy();
+            }
+            
+            // 카테고리별 프로젝트 수 계산
+            const categoryCounts = {};
+            allProjects.forEach(project => {
+                try {
+                    const category = JSON.parse(project.category || '{}');
+                    const categoryName = category.parent_name || '기타';
+                    categoryCounts[categoryName] = (categoryCounts[categoryName] || 0) + 1;
+                } catch {
+                    categoryCounts['기타'] = (categoryCounts['기타'] || 0) + 1;
+                }
+            });
+            
+            // 상위 8개 카테고리만 선택
+            const sortedCategories = Object.entries(categoryCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 8);
+            
+            const labels = sortedCategories.map(([name]) => name);
+            const data = sortedCategories.map(([, count]) => count);
+            
+            charts.categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#10b981', '#059669', '#34d399', '#6ee7b7',
+                            '#a7f3d0', '#d1fae5', '#ecfdf5', '#f0fdf4'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCategorySuccessChart() {
+            const ctx = document.getElementById('category-success-chart');
+            if (!ctx) return;
+            
+            if (charts.categorySuccessChart) {
+                charts.categorySuccessChart.destroy();
+            }
+            
+            // 카테고리별 성공률 계산
+            const categoryStats = {};
+            allProjects.forEach(project => {
+                try {
+                    const category = JSON.parse(project.category || '{}');
+                    const categoryName = category.parent_name || '기타';
+                    if (!categoryStats[categoryName]) {
+                        categoryStats[categoryName] = { total: 0, successful: 0 };
+                    }
+                    categoryStats[categoryName].total++;
+                    if (project.state === 'successful') {
+                        categoryStats[categoryName].successful++;
+                    }
+                } catch {
+                    if (!categoryStats['기타']) {
+                        categoryStats['기타'] = { total: 0, successful: 0 };
+                    }
+                    categoryStats['기타'].total++;
+                    if (project.state === 'successful') {
+                        categoryStats['기타'].successful++;
+                    }
+                }
+            });
+            
+            // 성공률 계산 및 상위 10개 선택
+            const successRates = Object.entries(categoryStats)
+                .map(([name, stats]) => ({
+                    name,
+                    rate: stats.total > 0 ? (stats.successful / stats.total) * 100 : 0,
+                    total: stats.total
+                }))
+                .filter(item => item.total >= 10) // 최소 10개 이상의 프로젝트가 있는 카테고리만
+                .sort((a, b) => b.rate - a.rate)
+                .slice(0, 8); // 8개로 줄임
+            
+            const labels = successRates.map(item => item.name);
+            const data = successRates.map(item => item.rate);
+            
+            charts.categorySuccessChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '성공률 (%)',
+                        data: data,
+                        backgroundColor: '#10b981',
+                        borderWidth: 0 // 선 제거
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: {
+                                angle: 0 // 카테고리명을 똑바른 각도로 배치
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCountryChart() {
+            const ctx = document.getElementById('country-chart');
+            if (!ctx) return;
+            
+            if (charts.countryChart) {
+                charts.countryChart.destroy();
+            }
+            
+            // 국가별 프로젝트 수 계산
+            const countryCounts = {};
+            allProjects.forEach(project => {
+                const country = project.country || 'Unknown';
+                countryCounts[country] = (countryCounts[country] || 0) + 1;
+            });
+            
+            // 상위 10개 국가 선택
+            const sortedCountries = Object.entries(countryCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 10);
+            
+            const labels = sortedCountries.map(([country]) => country);
+            const data = sortedCountries.map(([, count]) => count);
+            
+            charts.countryChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '프로젝트 수',
+                        data: data,
+                        backgroundColor: '#34d399',
+                        borderColor: '#10b981',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateStateChart() {
+            const ctx = document.getElementById('state-chart');
+            if (!ctx) return;
+            
+            if (charts.stateChart) {
+                charts.stateChart.destroy();
+            }
+            
+            // 상태별 프로젝트 수 계산
+            const stateCounts = {};
+            allProjects.forEach(project => {
+                const state = project.state || 'unknown';
+                stateCounts[state] = (stateCounts[state] || 0) + 1;
+            });
+            
+            const labels = Object.keys(stateCounts);
+            const data = Object.values(stateCounts);
+            const colors = ['#10b981', '#059669', '#34d399', '#6ee7b7'];
+            
+            charts.stateChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePledgedChart() {
+            const ctx = document.getElementById('pledged-chart');
+            if (!ctx) return;
+            
+            if (charts.pledgedChart) {
+                charts.pledgedChart.destroy();
+            }
+            
+            // 모금액 구간별 프로젝트 수 계산
+            const pledgedRanges = [
+                { min: 0, max: 1000, label: '$0-1K' },
+                { min: 1000, max: 5000, label: '$1K-5K' },
+                { min: 5000, max: 10000, label: '$5K-10K' },
+                { min: 10000, max: 50000, label: '$10K-50K' },
+                { min: 50000, max: 100000, label: '$50K-100K' },
+                { min: 100000, max: 1000000, label: '$100K-1M' },
+                { min: 1000000, max: Infinity, label: '$1M+' }
+            ];
+            
+            const rangeCounts = new Array(pledgedRanges.length).fill(0);
+            
+            allProjects.forEach(project => {
+                const pledged = parseFloat(project.pledged || 0);
+                for (let i = 0; i < pledgedRanges.length; i++) {
+                    if (pledged >= pledgedRanges[i].min && pledged < pledgedRanges[i].max) {
+                        rangeCounts[i]++;
+                        break;
+                    }
+                }
+            });
+            
+            const labels = pledgedRanges.map(range => range.label);
+            
+            charts.pledgedChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '프로젝트 수',
+                        data: rangeCounts,
+                        backgroundColor: '#6ee7b7',
+                        borderColor: '#34d399',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 통계 업데이트 후 차트 업데이트
+        function updateCharts() {
+            updateCategoryChart();
+            updateCategorySuccessChart();
+            updateCountryChart();
+            updateStateChart();
+            updatePledgedChart();
+        }
     </script>
 </body>
-</html> 
+</html>
